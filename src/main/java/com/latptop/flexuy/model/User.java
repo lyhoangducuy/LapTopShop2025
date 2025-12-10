@@ -28,6 +28,16 @@ public class User {
     private String phone;
     @Column(name="avatar")
     private String avatar;
+    @Column(name="reset_password_token")
+    private String resetPasswordToken;
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public void setResetPasswordToken(String reserPasswordToken) {
+        this.resetPasswordToken = reserPasswordToken;
+    }
 
     @ManyToOne
     @JoinColumn(name = "roleId")
