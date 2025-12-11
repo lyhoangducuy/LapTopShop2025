@@ -1,5 +1,6 @@
 package com.latptop.flexuy.ConfigSecurity;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.latptop.flexuy.service.CustomUserDetailsService;
+import com.latptop.flexuy.service.uploadFile.StorageService;
 
 @Configuration
 @EnableWebSecurity
@@ -45,4 +47,10 @@ public class ConfigSecurity {
 			.and()
 			.build();
 	}
+    	@Bean
+    CommandLineRunner init(StorageService storageService) {
+        return (args) -> {
+            storageService.init();
+        };
+    }
 }

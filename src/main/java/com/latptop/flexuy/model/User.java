@@ -38,10 +38,12 @@ public class User {
     public void setResetPasswordToken(String reserPasswordToken) {
         this.resetPasswordToken = reserPasswordToken;
     }
-
+    @Transient
+    private Long roleId;
     @ManyToOne
     @JoinColumn(name = "roleId")
     private Role role; // FK -> roles(id)
+
 
 	public String getEmail() {
 		return email;
@@ -105,6 +107,14 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
     
 }

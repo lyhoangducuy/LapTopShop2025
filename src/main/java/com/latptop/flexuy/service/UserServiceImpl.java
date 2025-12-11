@@ -1,9 +1,13 @@
 package com.latptop.flexuy.service;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.latptop.flexuy.dto.UserUpdateDTO;
 import com.latptop.flexuy.exception.UsernameNotFoundException;
 import com.latptop.flexuy.model.User;
 import com.latptop.flexuy.repository.UserRepository;
@@ -63,6 +67,36 @@ public class UserServiceImpl implements UserService {
 	}
 	@Override
 	public void save(User user) {
+		userRepository.save(user);
+	}
+	@Override
+	public ArrayList<User> findAll() {
+		
+		return userRepository.findAll();
+	}
+	@Override
+	public void deleteAllById(List<Long> userIds) {
+		userRepository.deleteAllById(userIds);
+	}
+	@Override
+	public User findById(Long id) {
+		return userRepository.findById(id).orElse(null);
+	}
+	@Override
+	public void update(UserUpdateDTO userDTO) {
+		User user = userRepository.findById(userDTO.getId()).orElse(null);
+		if (user == null) {
+			throw new IllegalArgumentException("User not found with id: " + userDTO.getId());
+		}
+
+		user.setEmail(userDTO.getEmail());
+		user.setFullName(userDTO.getFullName());
+		user.setAddress(userDTO.getAddress());
+		user.setPhone(userDTO.getPhone());
+		user.setAvatar(userDTO.getAvatar());
+		// Assuming you have a method to fetch Role by its ID
+		// Role role = roleService.findById(userDTO.getRoleId());
+		// user.setRole(role);
 		userRepository.save(user);
 	}
 	
