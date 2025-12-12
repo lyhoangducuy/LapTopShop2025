@@ -67,7 +67,10 @@
 				                    <option value="2">Customer</option>
 				                </select>
 				            </div>
-				
+							<div th:if="${error != null}" class="alert alert-danger">
+								<span th:text="${error}"></span>
+							</div>
+
 				            <!-- Button -->
 				            <button class="btn btn-primary w-100" type="submit">Create User</button>
 				

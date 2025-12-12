@@ -4,13 +4,20 @@ package com.latptop.flexuy.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.latptop.flexuy.dto.UserUpdateDTO;
 import com.latptop.flexuy.exception.UsernameNotFoundException;
 import com.latptop.flexuy.model.User;
 import com.latptop.flexuy.repository.UserRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -76,6 +83,7 @@ public class UserServiceImpl implements UserService {
 	}
 	@Override
 	public void deleteAllById(List<Long> userIds) {
+		
 		userRepository.deleteAllById(userIds);
 	}
 	@Override
@@ -99,5 +107,29 @@ public class UserServiceImpl implements UserService {
 		// user.setRole(role);
 		userRepository.save(user);
 	}
+	@Override
+	public Page<User> getAll(int pageNo) {
+		Pageable pageable=PageRequest.of(pageNo-1,2);
+		return this.userRepository.findAll(pageable);
+	}
+	@Override
+	public Page<User> searchUser(String keyword, int pageNo) {
+		Pageable pageable = PageRequest.of(pageNo - 1, 2); 
+		Page<User> pageResult = userRepository.findByFullNameContainingIgnoreCase(keyword, pageable);
+		return pageResult;
+	}
+	@Override
+	public void deleteAllByIdReal(HttpSession session, String action,List<Long> userIds) {
+		if ("all".equals(action)) {
+			userRepository.deleteAll();
+		} else if ("selected".equals(action)) {
+			if (userIds != null && !userIds.isEmpty()) {
+				userRepository.deleteAllById(userIds);
+				session.setAttribute("checkedUserIds", new ArrayList<Long>());
+			}
+		}
+	}
+
+
 	
 }

@@ -15,8 +15,7 @@
         }
     </style>
 </head>
-<body class="sb-nav-fixed">
-
+<body class="sb-nav-fixed" >
 <div th:replace="/admin/layouts/header::header"></div>
 
 <div id="layoutSidenav">
@@ -25,55 +24,111 @@
     <div id="layoutSidenav_content">
         <main class="container-fluid px-4 mt-4">
 
-            <h3 class="mb-4">User List2</h3>
 
             <div class="card mb-4">
                 <div class="card-header">
                     <i class="fas fa-users"></i>
-                    Danh sách người dùng
+                    User list
                 </div>
 
                 <div class="card-body">
-                    <a th:href="@{/admin/user/create}" class="btn btn-primary mb-3">Create New User</a>
-                    <form th:action="@{/admin/user/delete}" method="post">
-                    <button type="submit">Xóa đã chọn</button>
+
                     
-                    <table id="datatablesSimple" class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <th>SELECT</th>
-                            <th>ID</th>
-                            <th>Avatar</th>
-                            <th>Full Name</th>
-                            <th>Email</th>
-                            <th>View/Edit</th>
-                        </tr>
-                        </thead>
+                        
 
-                        <tbody>
-                        <tr th:each="u : ${users}">
-                             <td>
-                                <input type="checkbox" name="userIds" th:value="${u.id}">
-                            </td>
-                            <td th:text="${u.id}"></td>
+                    
+                        <div class="d-flex align-items-center mb-3"  style="gap: 8px; flex-wrap: wrap;">
+                            <a th:href="@{/admin/user/create}" class="btn btn-success">
+                                Create New User
+                            </a>
+                            <form th:action="@{/admin/user/viewUser}" method="get" class="d-flex" style="gap: 8px;">
+                                <input type="text" name="keyword" class="form-control" placeholder="Search..." th:value="${keyword}" style="width: 250px;">
+                                <button class="btn btn-primary">Search</button>
+                            </form>
+                            
+                    <form id="deleteForm" th:action="@{/admin/user/delete}" method="post" class="ms-auto">        
+                        <button type="submit" name="action" value="selected" id="delete" class="btn btn-danger">Xóa đã chọn</button>
+                        <button type="submit" name="action" value="all" id="delete" class="btn btn-warning">Xóa tất cả</button>
 
-                            <!-- Avatar -->
-                            <td>
-                                <img th:src="@{${'/uploads/' + u.avatar}}" class="avatar-img" alt="avatar">
-                            </td>
+                        </div>
 
-                            <!-- Full Name -->
-                            <td th:text="${u.fullName}"></td>
-                            <td th:text="${u.email}"></td>
-                            <td>
-                                <a th:href="@{/admin/user/detailUser/{id}(id=${u.id})}" class="btn btn-primary btn-sm">View detail</a>
-                                <a th:href="@{/admin/user/edit/{id}(id=${u.id})}" class="btn btn-primary btn-sm">Edit</a>
-                            </td>
-                        </tr>
-                        </tbody>
+                        
+                        <!-- TABLE THƯỜNG -->
+                        <table class="table table-bordered">
+                            <thead>  
+                            <tr>
+                                
+                                <th>ID</th>
+                                <th>Avatar</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>View/Edit</th>
+                                <th>SELECT</th>
+                                
+                            </tr>
+                            </thead>
+                            
+                            <tbody>
+                            <tr th:each="u : ${users}" >
+                               
+                                
+                                <td th:text="${u.id}"></td>
 
-                    </table>
+                                <!-- Avatar -->
+                                <td>
+                                    <img th:src="@{${'/uploads/' + u.avatar}}" class="avatar-img" alt="avatar">
+                                </td>
+
+                                <td th:text="${u.fullName}"></td>
+                                <td th:text="${u.email}"></td>
+
+                                <td>
+                                    <a th:href="@{/admin/user/detailUser/{id}(id=${u.id})}" class="btn btn-primary btn-sm">View</a>
+                                    <a th:href="@{/admin/user/edit/{id}(id=${u.id})}" class="btn btn-warning btn-sm">Edit</a>
+                                </td>
+                                 <td>
+                                    <input type="checkbox" name="userIds" th:value="${u.id}" th:checked="${checkedIds.contains(u.id)}">
+                                </td>
+                            </tr>
+                            
+                            </tbody>
+                            
+                        </table>
+                        
                     </form>
+                    <!-- PAGINATION -->
+                    <div class="d-flex justify-content-end mt-3">
+                        <ul class="pagination pagination-sm mb-0">
+
+                            <!-- Nút Previous -->
+                            <li class="page-item" th:if="${currentPage>1} ">
+                                <a class="page-link"
+                                th:href="@{${keyword == null || keyword=='' ? '?' : '?keyword='+keyword +'&'}+'pageNo='+${currentPage-1}}">
+                                    Trước
+                                </a>
+                            </li>
+
+                            <!-- Danh sách trang -->
+                            <li class="page-item"  th:if="${totalPage!=0} "
+                                th:each="i : ${#numbers.sequence(1, totalPage)}"
+                                th:classappend="${i == currentPage} ? ' active'">
+                                <a class="page-link"
+                                th:text="${i}"
+                                th:href="@{${keyword == null || keyword=='' ? '?' : '?keyword='+keyword +'&'}+'pageNo='+${i}}">
+                                </a>
+                            </li>
+
+                            <!-- Next -->
+                            <li class="page-item"  th:if="${currentPage<totalPage} ">
+                                <a class="page-link"
+                                 th:href="@{${keyword == null || keyword=='' ? '?' : '?keyword='+keyword +'&'}+'pageNo='+${currentPage+1}}">
+                                    Sau
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+
                 </div>
             </div>
 
@@ -83,11 +138,42 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script th:src="@{/assets/js/scripts.js}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
-        <script th:src="@{/assets/js/datatables-simple-demo.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script th:src="@{/assets/js/scripts.js}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
+    <script th:src="@{/assets/js/datatables-simple-demo.js}"></script>
+    <script>
+        document.querySelectorAll('input[name="userIds"]').forEach(cb => {
+            cb.addEventListener('change', function() {
+                let checkedIds = JSON.parse(sessionStorage.getItem('checkedUserIds') || '[]');
+                if (this.checked) {
+                    if (!checkedIds.includes(this.value)) checkedIds.push(this.value);
+                } else {
+                    checkedIds = checkedIds.filter(id => id != this.value);
+                }
+                sessionStorage.setItem('checkedUserIds', JSON.stringify(checkedIds));
+            });
+        });
+
+        // Khi trang load, set lại checkbox
+        window.addEventListener('load', function() {
+            let checkedIds = JSON.parse(sessionStorage.getItem('checkedUserIds') || '[]');
+
+            document.querySelectorAll('input[name="userIds"]').forEach(cb => {
+                if (checkedIds.includes(cb.value)) cb.checked = true;
+            });
+        });
+
+    
+
+
+
+
+
+    </script>
+    
 
 </body>
+
 </html>
