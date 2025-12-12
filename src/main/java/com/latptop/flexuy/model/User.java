@@ -8,6 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -30,7 +32,11 @@ public class User {
     private String avatar;
     @Column(name="reset_password_token")
     private String resetPasswordToken;
-
+    @Transient
+    private Long roleId;
+    @ManyToOne
+    @JoinColumn(name = "roleId")
+    private Role role; // FK -> roles(id)
     public String getResetPasswordToken() {
         return resetPasswordToken;
     }
@@ -38,83 +44,6 @@ public class User {
     public void setResetPasswordToken(String reserPasswordToken) {
         this.resetPasswordToken = reserPasswordToken;
     }
-    @Transient
-    private Long roleId;
-    @ManyToOne
-    @JoinColumn(name = "roleId")
-    private Role role; // FK -> roles(id)
+  
 
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
-    
 }
